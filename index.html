@@ -1,13 +1,49 @@
-<script>
+<html>
+  <head>
+    <title>学习垃圾制造机</title>
+    <meta http-equiv="content-type" content="txt/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <script src="https://hm.baidu.com/hm.js?058d1e446dd338b69f2e385ba2f930f2"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BM8WXEWW3P"></script>
+  </head>
+  <body>
+    <div id="主体">
+      <div id="标题">学术垃圾制造机</div>
+      <div id="主题">
+        <span>主题</span>
+        <input></input>
+        <button onclick="生成文章()">生成</button>
+      </div>
+      <div id="文章"></div>
+    <div id="页脚">
+    </div>
+  </body>
+</html>
 
-window.$ = function (selector) {
-  return document.querySelector(selector);
+<script>
+let _hmt = window._hmt || [];
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-BM8WXEWW3P');
+
+function track(eventName, title, seed) {
+    gtag('event', eventName, {'event_label': title,'seed': seed,'title_seed':title+'_'+seed});
+    _hmt.push(['_trackEvent', eventName, 'title', title]);
+    _hmt.push(['_trackEvent', eventName, 'title_seed', title+'_'+seed]);
 }
 
-let 主题 = "制造学术垃圾"
+window.$ = function (selector) {
+    return document.querySelector(selector);
+}
 
-let 论述 = [ 
-    "所以现在，思考关于媒介与传播与主题的联系，将会是十分必要的， ",
+function 获取网址参数(参数) {
+    return new URL(window.location.href).searchParams.get(参数)
+}
+
+let 论述 = [
+   "所以现在，思考关于媒介与传播与主题的联系，将会是十分必要的， ",
     "究竟，媒介技术发展到现在经历了哪些过程， ",
     "如今，传播本身的意义已经发生了巨大的改变 ",
     "前人的研究已经为我们打开了研究媒介的一种角度。 ",
@@ -35,9 +71,6 @@ let 论述 = [
     "这般说来， ",
     "先前的论述已经证明了， ",
     "一般来说， ",
-    "总的来说， ",
-    "说到这里， ",
-    "由此观之",
 ]
 
 let 名人名言 = [
@@ -156,67 +189,101 @@ let 前面垫话 = [
     "在研究后总结道",
 ]
 
+let 初始主题 = [
+    '媒介与社会',
+    '媒介与传播',
+    '媒介即讯息,
+]
+
+let 下取整 = Math.floor;
+
+let 同余乘数 = 214013;
+let 同余加数 = 2531011;
+let 同余模 = Math.pow(2,32);
+
+let 随机种子 = 获取网址参数('随机种子') || 下取整( 随便取一个数(0, 同余模, Math.random) );
+
+let 主题 = 获取网址参数('主题') || 随便取一句(初始主题)
+
+$('input').value = 主题;
+
+// LCG https://en.wikipedia.org/wiki/Linear_congruential_generator
+function 同余发生器() {
+    随机种子 = ( 随机种子 * 同余乘数 + 同余加数 ) % 同余模;
+    return 随机种子 / 同余模;
+};
+
 function 随便取一句(列表){
-    let 坐标 = Math.floor( Math.random() * 列表.length );
+    let 坐标 = 下取整( 同余发生器() * 列表.length );
     return 列表[坐标];
 }
 
-function 随便取一个数(最小值 = 0,最大值 = 100){
-    let 数字 = Math.random()*( 最大值 - 最小值 ) + 最小值;
+function 随便取一个数(最小值 = 0,最大值 = 100,随机数函数 = 同余发生器){
+    let 数字 = 随机数函数() * ( 最大值 - 最小值 ) + 最小值;
     return 数字;
 }
 
 function 来点名人名言(){
     let 名言 = 随便取一句(名人名言)
-    名言 = 名言.replace("曾经说过", 随便取一句(前面垫话) )
-    名言 = 名言.replace("这不禁令我深思", 随便取一句(后面垫话) )
+    名言 = 名言.replace('曾经说过', 随便取一句(前面垫话) )
+    名言 = 名言.replace('这不禁令我深思', 随便取一句(后面垫话) )
     return 名言
 }
 
 function 来点论述(){
     let 句子 = 随便取一句(论述);
-    句子 = 句子.replace(RegExp("主题", "g"),主题);
+    句子 = 句子.replace(RegExp('主题', 'g'),主题);
     return 句子;
 }
 
-function 增加段落(章节){
-    if(章节[章节.length-1] === " "){
-        章节 = 章节.slice(0,-2)
+function 增加段落(段落){
+    if(段落[段落.length-1] === ' '){
+        段落 = 段落.slice(0,-2)
     }
-    return "　　" + 章节 + "。 "
+    return '　　' + 段落 + '。 '
 }
 
 function 生成文章(){
     主题 = $('input').value
+    history.pushState({url: window.location.href}, null ,'?主题=' + 主题 + '&随机种子=' + 随机种子);
+    track('generator', 主题, 随机种子);
     let 文章 = []
-    for(let 空 in 主题){
-        let 章节 = "";
-        let 章节长度 = 0;
-        while( 章节长度 < 6000 ){
-            let 随机数 = 随便取一个数();
-            if(随机数 < 5 && 章节.length > 200){
-                章节 = 增加段落(章节);
-                文章.push(章节); 
-                章节 = "";
-            }else if(随机数 < 20){
-                let 句子 = 来点名人名言();
-                章节长度 = 章节长度 + 句子.length;
-                章节 = 章节 + 句子;
-            }else{
-                let 句子 = 来点论述();
-                章节长度 = 章节长度 + 句子.length;
-                章节 = 章节 + 句子;
-            }
+    let 段落 = '';
+    let 文章长度 = 0;
+    while( 文章长度 < 12000 ){
+        let 随机数 = 随便取一个数();
+        if(随机数 < 5 && 段落.length > 200){
+            段落 = 增加段落(段落);
+            文章.push(段落);
+            段落 = '';
+        }else if(随机数 < 20){
+            let 句子 = 来点名人名言();
+            文章长度 = 文章长度 + 句子.length;
+            段落 = 段落 + 句子;
+        }else{
+            let 句子 = 来点论述();
+            文章长度 = 文章长度 + 句子.length;
+            段落 = 段落 + 句子;
         }
-        章节 = 增加段落(章节);
-        文章.push(章节);
     }
-    let 排版 = "<div>" + 文章.join("</div><div>") + "</div>";
-    $("#论文").innerHTML = 排版;
+    段落 = 增加段落(段落);
+    文章.push(段落);
+
+    let 排版 = '<div>' + 文章.join('</div><div>') + '</div>';
+    $('#文章').innerHTML = 排版;
+    $('#声明文字').style.display = 'block'
+}
+
+if (获取网址参数('主题')) {
+    生成文章();
+    track('shared', 主题, 随机种子);
 }
 
 </script>
-<div>communication generator</div>
-<div>主题<input value="制造学术垃圾"></input></div>
-<div></div><button onclick="生成文章()">生成</button></div>
-<div id="论文"></div>
+<style>
+  @media screen and (max-width: 1024px) {
+    html{
+      font-size: 2vw;
+      color: #333333;
+    }
+</style>
